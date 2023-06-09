@@ -1,13 +1,8 @@
 <script>
 import { getName } from 'i18n-iso-countries';
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { faStar, faStarHalfAlt } from '@fortawesome/free-solid-svg-icons';
 
 export default (await import('vue')).defineComponent({
     name: "FilmElement",
-    components: {
-        FontAwesomeIcon
-    },
     props: {
         details: Object
     },
@@ -21,10 +16,13 @@ export default (await import('vue')).defineComponent({
         countryCode() {
             // Convert language code to country code
             const lang = this.details.original_language;
-            let countryCode = getName(lang, 'en');
-            // Handle special cases
+            let countryCode = getName(lang);
+
             if (lang === 'en') {
                 countryCode = 'gb';
+            }
+            if (lang === 'it') {
+                countryCode = 'it';
             }
             console.log('countryCode:', countryCode);
             return countryCode;
@@ -58,33 +56,36 @@ export default (await import('vue')).defineComponent({
 <template>
     <div id="movie">
         <div>
-            <!-- Movie title -->
-            <h2>{{ details.title }}</h2>
             <!-- Movie poster -->
             <img v-if="isVisible" :src="`https://image.tmdb.org/t/p/w500${details.poster_path}`">
-            <!-- Original Movie title -->
-            <h3>{{ details.original_title }}</h3>
-            <!-- Movie language -->
-            <p>Language: <span :class="['flag-icon', `flag-icon-${countryCode}`]"></span></p>
-            <!-- Movie vote average -->
-            <p>Vote Average:
-                <span v-for="star in stars" :key="star">
-                    <font-awesome-icon icon="star"></font-awesome-icon>
-                </span>
-                <span v-for="star in 5 - stars" :key="star">
-                    <font-awesome-icon icon="star" class="empty-star"></font-awesome-icon>
-                </span>
-            </p>
+
+            <!-- Movie details -->
+            <div class="details">
+                <!-- Movie title -->
+                <h2>{{ details.title }}</h2>
+                <!-- Original Movie title -->
+                <h3>{{ details.original_title }}</h3>
+                <!-- Movie language -->
+                <p>Language: <span :class="['flag-icon', `flag-icon-${countryCode}`]"></span></p>
+                <!-- Movie vote average -->
+                <p>Vote Average:
+                    <span v-for="star in stars" :key="star">
+                        <i class="bi bi-star-fill"></i>
+                    </span>
+                    <span v-for="star in 5 - stars" :key="star">
+                        <i class="bi bi-star"></i>
+                    </span>
+                </p>
+            </div>
         </div>
     </div>
 </template>
 
 <style scoped lang="scss">
 @import '../../node_modules/flag-icon-css/css/flag-icons.css';
-@import '../../node_modules/@fortawesome/fontawesome-svg-core/styles.css';
+@import '../../node_modules/bootstrap-icons/font/bootstrap-icons.css';
 
-
-.empty-star {
+.bi-star {
     color: #ccc;
 }
 
@@ -95,9 +96,12 @@ export default (await import('vue')).defineComponent({
 
 #movie {
     margin: 20px;
-    padding: 20px;
     background-color: #212529;
     border: 3px groove #6f7881;
+    height: 450px;
+    width: 300px;
+    display: flex;
+    align-items: center;
 
     h2 {
         font-size: 20px;
@@ -106,9 +110,29 @@ export default (await import('vue')).defineComponent({
         color: white;
     }
 
+    h3 {
+        color: rgb(226, 190, 70);
+    }
+
+    p {
+        color: rgb(226, 190, 70);
+    }
+
     img {
-        width: 300px;
-        height: 500px;
+        height: 100%;
+        width: 100%;
+    }
+
+    .details {
+        display: none;
+    }
+
+    &:hover img {
+        display: none;
+    }
+
+    &:hover .details {
+        display: block;
     }
 }
 </style>
