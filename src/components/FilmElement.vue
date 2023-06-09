@@ -76,6 +76,11 @@ export default (await import('vue')).defineComponent({
                         <i class="bi bi-star"></i>
                     </span>
                 </p>
+                <!-- Movie overview -->
+                <p>
+                    Overview: {{ details.overview }}
+                </p>
+
             </div>
         </div>
     </div>
@@ -102,20 +107,23 @@ export default (await import('vue')).defineComponent({
     width: 300px;
     display: flex;
     align-items: center;
+    justify-content: center;
 
     h2 {
-        font-size: 20px;
+        font-size: 35px;
         text-align: center;
-        margin-bottom: 10px;
+        margin-bottom: 20px;
         color: white;
     }
 
     h3 {
         color: rgb(226, 190, 70);
+        margin-bottom: 10px;
     }
 
     p {
         color: rgb(226, 190, 70);
+        margin-bottom: 10px;
     }
 
     img {
