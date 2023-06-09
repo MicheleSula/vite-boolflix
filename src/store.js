@@ -9,13 +9,19 @@ export const store = reactive({
 
 export async function searchMovies(query) {
     try {
-        const response = await axios.get(`${store.apiURL}/search/movie`, {
+        const movieResponse = await axios.get(`${store.apiURL}/search/movie`, {
             params: {
                 api_key: store.apiKey,
                 query: query
             }
         });
-        store.movies = response.data.results;
+        const tvSeriesResponse = await axios.get(`${store.apiURL}/search/tv`, {
+            params: {
+                api_key: store.apiKey,
+                query: query
+            }
+        });
+        store.movies = [...movieResponse.data.results, ...tvSeriesResponse.data.results];
     } catch (error) {
         console.error(error);
     }
@@ -23,12 +29,12 @@ export async function searchMovies(query) {
 
 export async function getPopularMovies() {
     try {
-        const response = await axios.get(`${store.apiURL}/movie/popular`, {
+        const popularMovieResponse = await axios.get(`${store.apiURL}/movie/popular`, {
             params: {
                 api_key: store.apiKey
             }
         });
-        store.movies = response.data.results.slice(0, 10);
+        store.movies = popularMovieResponse.data.results.slice(0, 10);
     } catch (error) {
         console.error(error);
     }

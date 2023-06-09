@@ -1,6 +1,13 @@
 <script>
+import { getName } from 'i18n-iso-countries';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { faStar, faStarHalfAlt } from '@fortawesome/free-solid-svg-icons';
+
 export default (await import('vue')).defineComponent({
     name: "FilmElement",
+    components: {
+        FontAwesomeIcon
+    },
     props: {
         details: Object
     },
@@ -8,6 +15,25 @@ export default (await import('vue')).defineComponent({
         return {
             isVisible: false,
             observer: null
+        }
+    },
+    computed: {
+        countryCode() {
+            // Convert language code to country code
+            const lang = this.details.original_language;
+            let countryCode = getName(lang, 'en');
+            // Handle special cases
+            if (lang === 'en') {
+                countryCode = 'gb';
+            }
+            console.log('countryCode:', countryCode);
+            return countryCode;
+        },
+        stars() {
+            // Calculate number of full and half stars
+            const voteAverage = this.details.vote_average;
+            const stars = Math.round(voteAverage / 2);
+            return stars;
         }
     },
     mounted() {
@@ -36,15 +62,32 @@ export default (await import('vue')).defineComponent({
             <h2>{{ details.title }}</h2>
             <!-- Movie poster -->
             <img v-if="isVisible" :src="`https://image.tmdb.org/t/p/w500${details.poster_path}`">
-            <!-- Movie release date -->
-            <p>Release date: {{ details.release_date }}</p>
-            <!-- Movie overview -->
-            <p>{{ details.overview }}</p>
+            <!-- Original Movie title -->
+            <h3>{{ details.original_title }}</h3>
+            <!-- Movie language -->
+            <p>Language: <span :class="['flag-icon', `flag-icon-${countryCode}`]"></span></p>
+            <!-- Movie vote average -->
+            <p>Vote Average:
+                <span v-for="star in stars" :key="star">
+                    <font-awesome-icon icon="star"></font-awesome-icon>
+                </span>
+                <span v-for="star in 5 - stars" :key="star">
+                    <font-awesome-icon icon="star" class="empty-star"></font-awesome-icon>
+                </span>
+            </p>
         </div>
     </div>
 </template>
 
 <style scoped lang="scss">
+@import '../../node_modules/flag-icon-css/css/flag-icons.css';
+@import '../../node_modules/@fortawesome/fontawesome-svg-core/styles.css';
+
+
+.empty-star {
+    color: #ccc;
+}
+
 #movies-container {
     height: calc(100vh - 150px);
     background-color: olive;
